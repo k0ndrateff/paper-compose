@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsx src/index.ts test.md",
+    "dev": "tsx src/index.ts ./test.md",
     "start": "node dist/index.js test.md"
   },
   "files": [
@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "chalk": "^5.6.0",
-    "commander": "^14.0.0"
+    "commander": "^14.0.0",
+    "remark": "^15.0.1"
   }
 }
