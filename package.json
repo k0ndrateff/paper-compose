@@ -1,0 +1,31 @@
+{
+  "name": "paper-compose",
+  "version": "0.1.0",
+  "description": "Compose DOCX from Markdown files.",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "paper-compose": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts test.md",
+    "start": "node dist/index.js test.md"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "tsup": "^8.5.0",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "chalk": "^5.6.0",
+    "commander": "^14.0.0"
+  }
+}
