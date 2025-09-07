@@ -2,8 +2,8 @@ import {Packer, Document, Paragraph, TextRun} from "docx";
 import * as fs from "node:fs";
 import {Content, Paragraph as MdParagraph, Emphasis, List, Root, RootContent, Strong, Text, Heading} from "mdast";
 import chalk from "chalk";
-import {cm, pt} from "./helpers/measures";
 import Typograf from "typograf";
+import {DocumentOptions} from "./DocumentOptions";
 
 export class PaperDoc {
   private readonly name: string;
@@ -16,90 +16,7 @@ export class PaperDoc {
 
     this.typograf = new Typograf({ locale: ['ru', 'en-US'], disableRule: ['common/space/delTrailingBlanks', 'common/space/delLeadingBlanks', 'common/space/trimLeft', 'common/space/trimRight'] });
 
-    this.doc = new Document({
-      styles: {
-        paragraphStyles: [
-          {
-            id: "Normal",
-            name: "Normal",
-            basedOn: "Normal",
-            next: "Normal",
-            run: {
-              font: "Times New Roman",
-              size: pt(14),
-            },
-            paragraph: {
-              alignment: "both",
-              spacing: {
-                line: 360,   // полуторный интервал
-                after: 0,
-              },
-              indent: {
-                firstLine: cm(1.25)
-              },
-            },
-          },
-          {
-            id: "Heading1",
-            name: "Heading 1",
-            basedOn: "Normal",
-            next: "Normal",
-            quickFormat: true,
-            run: {
-              bold: true,
-              size: pt(18),
-              allCaps: true,
-            },
-            paragraph: {
-              spacing: { before: 240, after: 120 },
-            },
-          },
-          {
-            id: "Heading2",
-            name: "Heading 2",
-            basedOn: "Normal",
-            next: "Normal",
-            quickFormat: true,
-            run: {
-              bold: true,
-              size: pt(16),
-            },
-            paragraph: {
-              spacing: { before: 240, after: 120 },
-            },
-          },
-          {
-            id: "Heading3",
-            name: "Heading 3",
-            basedOn: "Normal",
-            next: "Normal",
-            quickFormat: true,
-            run: {
-              bold: true,
-              size: pt(14),
-            },
-            paragraph: {
-              spacing: { before: 240, after: 120 },
-            },
-          },
-        ],
-      },
-      sections: [
-        {
-          properties: {
-            page: {
-              margin: {
-                top: cm(2),
-                right: cm(1),
-                bottom: cm(2),
-                left: cm(3),
-              },
-            },
-          },
-          children: [],
-        },
-      ],
-    });
+    this.doc = new Document(DocumentOptions.default);
   }
 
   convert = (source: Root): void => {
@@ -133,7 +50,7 @@ export class PaperDoc {
     switch (node.type) {
       case "heading": {
         const level = (node as Heading).depth;
-        const style = `Heading${Math.min(level, 3)}`; // поддерживаем только 1-3
+        const style = `Heading${Math.min(level, 3)}`;
         return new Paragraph({
           children: this.convertChildren(node.children),
           pageBreakBefore: level <= 2,
@@ -150,16 +67,13 @@ export class PaperDoc {
 
       case "list": {
         const listNode = node as List;
-        return listNode.children.map((item, i) =>
+        return listNode.children.map(item =>
           new Paragraph({
             children: this.convertChildren(item.children),
-            bullet: listNode.ordered ? undefined : { level: 0 }, // маркированный список
-            numbering: listNode.ordered
-              ? {
-                reference: "numbering",
-                level: 0,
-              }
-              : undefined,
+            numbering: {
+              reference: listNode.ordered ? "numbering" : "bullet",
+              level: 0,
+            },
           })
         );
       }
