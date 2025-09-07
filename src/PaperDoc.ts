@@ -35,7 +35,7 @@ export class PaperDoc {
                 after: 0,
               },
               indent: {
-                firstLine: 720, // абзацный отступ = 0.5"
+                firstLine: cm(1.25)
               },
             },
           },
@@ -47,7 +47,36 @@ export class PaperDoc {
             quickFormat: true,
             run: {
               bold: true,
+              size: pt(18),
+              allCaps: true,
+            },
+            paragraph: {
+              spacing: { before: 240, after: 120 },
+            },
+          },
+          {
+            id: "Heading2",
+            name: "Heading 2",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              bold: true,
               size: pt(16),
+            },
+            paragraph: {
+              spacing: { before: 240, after: 120 },
+            },
+          },
+          {
+            id: "Heading3",
+            name: "Heading 3",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              bold: true,
+              size: pt(14),
             },
             paragraph: {
               spacing: { before: 240, after: 120 },
@@ -96,6 +125,8 @@ export class PaperDoc {
     const buffer = await Packer.toBuffer(this.doc);
 
     fs.writeFileSync(`${this.name}.docx`, buffer);
+
+    console.log(`${chalk.green('Документ сохранен в')} ${chalk.yellow(`${this.name}.docx`)}${chalk.green('!')}`);
   };
 
   private convertNode = (node: RootContent): Paragraph | Paragraph[] | null => {
@@ -105,6 +136,7 @@ export class PaperDoc {
         const style = `Heading${Math.min(level, 3)}`; // поддерживаем только 1-3
         return new Paragraph({
           children: this.convertChildren(node.children),
+          pageBreakBefore: level <= 2,
           style,
         });
       }
