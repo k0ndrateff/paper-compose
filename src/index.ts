@@ -4,6 +4,7 @@ import chalk from "chalk";
 import * as fs from "node:fs";
 import {MdParser} from "./MdParser";
 import {PaperDoc} from "./PaperDoc";
+import {Converter} from "./Converter";
 
 program
   .name('paper-compose')
@@ -17,7 +18,10 @@ program
 
     const result = new MdParser(md).parse();
     const doc = new PaperDoc(file.split('.md')[0]);
-    doc.convert(result);
+
+    const converter = new Converter();
+
+    doc.addNodes(converter.convert(result));
     await doc.save();
   });
 
