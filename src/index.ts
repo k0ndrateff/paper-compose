@@ -21,7 +21,7 @@ program
 
     const converter = new Converter();
 
-    doc.addNodes(converter.convert(result));
+    doc.addNodes(await converter.convert(result));
     await doc.save();
   });
 

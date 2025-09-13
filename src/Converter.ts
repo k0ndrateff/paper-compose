@@ -1,46 +1,55 @@
-import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text} from "mdast";
+import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage} from "mdast";
 import chalk from "chalk";
-import {Paragraph, TextRun} from "docx";
+import {Paragraph, TextRun, ImageRun} from "docx";
 import Typograf from "typograf";
+import { ImageConverter } from "./ImageConverter";
 
 export class Converter {
   private readonly typograf: Typograf;
 
+  private readonly imageConverter: ImageConverter;
+
   constructor() {
     this.typograf = new Typograf({
       locale: ['ru', 'en-US'],
-      disableRule: ['common/space/delTrailingBlanks', 'common/space/delLeadingBlanks', 'common/space/trimLeft', 'common/space/trimRight']
+      disableRule: [
+        'common/space/delTrailingBlanks',
+        'common/space/delLeadingBlanks',
+        'common/space/trimLeft',
+        'common/space/trimRight'
+      ]
     });
+
+    this.imageConverter = new ImageConverter();
   }
 
-  convert = (source: Root): Paragraph[] => {
+  convert = async (source: Root): Promise<Paragraph[]> => {
     console.log(`${chalk.blue('Конвертация...')}`);
 
     const nodes: Paragraph[] = [];
 
     for (let child of source.children) {
-      const paragraph = this.convertNode(child);
+      const paragraph = await this.convertNode(child);
 
       if (!paragraph)
         continue;
 
-      if (paragraph instanceof Array)
-        for (const p of paragraph)
-          nodes.push(p);
-
-      nodes.push(paragraph as Paragraph);
+      if (Array.isArray(paragraph))
+        nodes.push(...paragraph);
+      else
+        nodes.push(paragraph);
     }
 
     return nodes;
   };
 
-  private convertNode = (node: RootContent): Paragraph | Paragraph[] | null => {
+  private convertNode = async (node: RootContent): Promise<Paragraph | Paragraph[] | null> => {
     switch (node.type) {
       case "heading": {
         const level = (node as Heading).depth;
         const style = `Heading${Math.min(level, 3)}`;
         return new Paragraph({
-          children: this.convertChildren(node.children),
+          children: await this.convertChildren(node.children),
           pageBreakBefore: level <= 2,
           style,
         });
@@ -48,22 +57,26 @@ export class Converter {
 
       case "paragraph": {
         return new Paragraph({
-          children: this.convertChildren((node as MdParagraph).children),
+          children: await this.convertChildren((node as MdParagraph).children),
           style: "Normal",
         });
       }
 
       case "list": {
         const listNode = node as List;
-        return listNode.children.map(item =>
-          new Paragraph({
-            children: this.convertChildren(item.children),
+        const children: Paragraph[] = [];
+
+        for (const item of listNode.children) {
+          children.push(new Paragraph({
+            children: await this.convertChildren(item.children),
             numbering: {
               reference: listNode.ordered ? "numbering" : "bullet",
               level: 0,
             },
-          })
-        );
+          }));
+        }
+
+        return children;
       }
 
       default:
@@ -71,8 +84,8 @@ export class Converter {
     }
   };
 
-  private convertChildren = (children: Content[]): TextRun[] => {
-    const runs: TextRun[] = [];
+  private convertChildren = async (children: Content[]): Promise<(TextRun | ImageRun)[]> => {
+    const runs: (TextRun | ImageRun)[] = [];
 
     for (const child of children) {
       switch (child.type) {
@@ -81,28 +94,33 @@ export class Converter {
           break;
 
         case "strong":
-          runs.push(
-            new TextRun({
-              text: this.getPlainText((child as Strong).children),
-              bold: true,
-            })
-          );
+          runs.push(new TextRun({
+            text: this.getPlainText((child as Strong).children),
+            bold: true,
+          }));
+
           break;
 
         case "emphasis":
-          runs.push(
-            new TextRun({
-              text: this.getPlainText((child as Emphasis).children),
-              italics: true,
-            })
-          );
+          runs.push(new TextRun({
+            text: this.getPlainText((child as Emphasis).children),
+            italics: true,
+          }));
+
           break;
 
+        case "image": {
+          const {url, alt} = child as MdImage;
+          const imgRun = await this.imageConverter.convert(url, alt ?? undefined);
+
+          if (imgRun) runs.push(imgRun);
+
+          break;
+        }
+
         default:
-          // рекурсия для вложенных случаев
-          if ("children" in child) {
-            runs.push(...this.convertChildren((child as any).children));
-          }
+          if ("children" in child)
+            runs.push(...await this.convertChildren((child as any).children));
       }
     }
 
