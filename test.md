@@ -19,4 +19,4 @@
 
 ### Заголовок 3 уровня
 
-![image](./amocrm.svg)
+![Рис. 1 — AmoCRM](./amocrm.svg)

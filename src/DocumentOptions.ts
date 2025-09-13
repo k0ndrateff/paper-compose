@@ -84,6 +84,21 @@ export class DocumentOptions {
               spacing: { before: 240, after: 120 },
             },
           },
+          {
+            id: "ImageCaption",
+            name: "Image Caption",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              italics: true,
+              size: pt(14),
+            },
+            paragraph: {
+              alignment: AlignmentType.CENTER,
+              spacing: { before: 0, after: 120 },
+            },
+          },
         ],
       },
       numbering: {

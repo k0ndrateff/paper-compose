@@ -1,6 +1,6 @@
 import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage} from "mdast";
 import chalk from "chalk";
-import {Paragraph, TextRun, ImageRun} from "docx";
+import {Paragraph, TextRun, ImageRun, AlignmentType} from "docx";
 import Typograf from "typograf";
 import { ImageConverter } from "./ImageConverter";
 
@@ -56,6 +56,24 @@ export class Converter {
       }
 
       case "paragraph": {
+        if (node.children[0]?.type === "image") {
+          const {url, alt} = node.children[0] as MdImage;
+          const imgRun = await this.imageConverter.convert(url, alt ?? undefined);
+
+          if (!imgRun) return null;
+
+          return [
+            new Paragraph({
+              children: [imgRun],
+              alignment: AlignmentType.CENTER,
+            }),
+            new Paragraph({
+              text: alt ?? url,
+              style: "ImageCaption",
+            })
+          ];
+        }
+
         return new Paragraph({
           children: await this.convertChildren((node as MdParagraph).children),
           style: "Normal",
@@ -108,15 +126,6 @@ export class Converter {
           }));
 
           break;
-
-        case "image": {
-          const {url, alt} = child as MdImage;
-          const imgRun = await this.imageConverter.convert(url, alt ?? undefined);
-
-          if (imgRun) runs.push(imgRun);
-
-          break;
-        }
 
         default:
           if ("children" in child)

@@ -1,6 +1,7 @@
 import {ImageRun} from "docx";
 import fs from "fs/promises";
 import path from "path";
+import sizeOf from "image-size";
 
 export class ImageConverter {
   async convert(src: string, alt?: string): Promise<ImageRun | null> {
@@ -10,23 +11,33 @@ export class ImageConverter {
       if (src.startsWith("http://") || src.startsWith("https://")) {
         const res = await fetch(src);
 
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
         buffer = Buffer.from(await res.arrayBuffer());
       } else {
         const abs = path.resolve(src);
-
         buffer = await fs.readFile(abs);
+      }
+
+      const dim = sizeOf(buffer);
+
+      if (!dim.width || !dim.height || !dim.type) {
+        throw new Error("Не удалось определить размеры или тип изображения");
       }
 
       return new ImageRun({
         data: buffer,
-        type: 'png',
         transformation: {
-          width: 400,
-          height: 300,
+          width: dim.width,
+          height: dim.height,
         },
+        type: dim.type as "png" | "jpg" | "gif" | "bmp" | 'svg',
         altText: {
-          name: String(alt),
-          title: alt
+          name: String(alt)
+        },
+        fallback: {
+          type: 'png',
+          data: buffer
         }
       });
     } catch (e) {
