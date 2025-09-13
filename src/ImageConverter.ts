@@ -21,15 +21,25 @@ export class ImageConverter {
 
       const dim = sizeOf(buffer);
 
-      if (!dim.width || !dim.height || !dim.type) {
+      if (!dim.width || !dim.height || !dim.type)
         throw new Error("Не удалось определить размеры или тип изображения");
+
+      const MAX_WIDTH = 500;
+      let width = dim.width;
+      let height = dim.height;
+
+      if (width > MAX_WIDTH) {
+        const ratio = MAX_WIDTH / width;
+
+        width = MAX_WIDTH;
+        height = Math.round(height * ratio);
       }
 
       return new ImageRun({
         data: buffer,
         transformation: {
-          width: dim.width,
-          height: dim.height,
+          width: width,
+          height: height,
         },
         type: dim.type as "png" | "jpg" | "gif" | "bmp" | 'svg',
         altText: {
