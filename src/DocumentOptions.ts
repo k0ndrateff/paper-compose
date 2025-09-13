@@ -1,5 +1,5 @@
-import {AlignmentType, Footer, IPropertiesOptions, PageNumber, Paragraph, TableOfContents, TextRun} from "docx";
-import {cm, pt} from "./helpers/measures";
+import { AlignmentType, Footer, IPropertiesOptions, PageNumber, Paragraph, TableOfContents, TextRun } from "docx";
+import { cm, pt } from "./helpers/measures";
 
 export class DocumentOptions {
   static get default(): IPropertiesOptions {

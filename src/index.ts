@@ -2,16 +2,16 @@
 import { program } from 'commander';
 import chalk from "chalk";
 import * as fs from "node:fs";
-import {MdParser} from "./MdParser";
-import {PaperDoc} from "./PaperDoc";
-import {Converter} from "./Converter";
+import { MdParser } from "./MdParser";
+import { PaperDoc } from "./PaperDoc";
+import { Converter } from "./converters/Converter";
 
 program
   .name('paper-compose')
   .description('Markdown → DOCX/PDF с авто-форматированием')
   .version('0.1.0')
   .argument('<file>', 'Markdown файл для обработки')
-  .action(async (file, options) => {
+  .action(async file => {
     console.log(`${chalk.green('Начато преобразование для')} ${chalk.yellow(file)}${chalk.green('...')}`);
 
     const md = fs.readFileSync(file, 'utf-8');

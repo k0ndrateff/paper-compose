@@ -1,5 +1,5 @@
-import {remark} from "remark";
-import {Root} from "mdast";
+import { remark } from "remark";
+import { Root } from "mdast";
 import chalk from "chalk";
 
 export class MdParser {

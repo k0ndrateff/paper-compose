@@ -1,7 +1,7 @@
-import {Packer, Document, Paragraph} from "docx";
+import { Packer, Document, Paragraph } from "docx";
 import * as fs from "node:fs";
 import chalk from "chalk";
-import {DocumentOptions} from "./DocumentOptions";
+import { DocumentOptions } from "./DocumentOptions";
 
 export class PaperDoc {
   private readonly name: string;

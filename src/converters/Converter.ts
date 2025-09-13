@@ -1,6 +1,6 @@
-import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage} from "mdast";
+import { Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage } from "mdast";
 import chalk from "chalk";
-import {Paragraph, TextRun, ImageRun, AlignmentType} from "docx";
+import { Paragraph, TextRun, ImageRun, AlignmentType } from "docx";
 import Typograf from "typograf";
 import { ImageConverter } from "./ImageConverter";
 
@@ -50,7 +50,7 @@ export class Converter {
         const style = `Heading${Math.min(level, 3)}`;
         return new Paragraph({
           children: await this.convertChildren(node.children),
-          pageBreakBefore: level <= 2,
+          pageBreakBefore: level === 1,
           style,
         });
       }

@@ -1,4 +1,4 @@
-import {ImageRun} from "docx";
+import { ImageRun } from "docx";
 import fs from "fs/promises";
 import path from "path";
 import sizeOf from "image-size";
@@ -52,6 +52,7 @@ export class ImageConverter {
       });
     } catch (e) {
       console.error("Не удалось загрузить изображение:", src, e);
+
       return null;
     }
   }
