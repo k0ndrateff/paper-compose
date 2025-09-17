@@ -16,8 +16,6 @@
 npm i -g paper-compose
 ```
 
----
-
 ## Использование
 
 1. Подготовьте текст работы в формате Markdown.
@@ -26,8 +24,6 @@ npm i -g paper-compose
 ```bash
 paper-compose <your-file>.md
 ```
-
----
 
 ## Возможности
 
