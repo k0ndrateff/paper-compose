@@ -13,7 +13,7 @@ export class PaperDoc {
     this.doc = new Document(DocumentOptions.default);
   }
 
-  addNodes(nodes: Paragraph[]) {
+  addNodes = (nodes: Paragraph[]): void => {
     for (const node of nodes) {
       this.doc.Document.View.add(node);
     }
