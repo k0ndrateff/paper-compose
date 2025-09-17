@@ -9,7 +9,7 @@ import { Converter } from "./converters/Converter";
 program
   .name('paper-compose')
   .description('Markdown → DOCX/PDF с авто-форматированием')
-  .version('0.3.1')
+  .version('0.4.0')
   .argument('<file>', 'Markdown файл для обработки')
   .action(async file => {
     console.log(`${chalk.green('Начато преобразование для')} ${chalk.yellow(file)}${chalk.green('...')}`);

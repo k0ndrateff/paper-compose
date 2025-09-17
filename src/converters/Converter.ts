@@ -1,6 +1,6 @@
-import { Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage } from "mdast";
+import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage, Link} from "mdast";
 import chalk from "chalk";
-import { Paragraph, TextRun, ImageRun, AlignmentType } from "docx";
+import {Paragraph, TextRun, ImageRun, AlignmentType, PageBreak, ExternalHyperlink} from "docx";
 import Typograf from "typograf";
 import { ImageConverter } from "./ImageConverter";
 
@@ -97,13 +97,19 @@ export class Converter {
         return children;
       }
 
+      case "thematicBreak": {
+        return new Paragraph({
+          children: [new PageBreak()]
+        });
+      }
+
       default:
         return null;
     }
   };
 
-  private convertChildren = async (children: Content[]): Promise<(TextRun | ImageRun)[]> => {
-    const runs: (TextRun | ImageRun)[] = [];
+  private convertChildren = async (children: Content[]): Promise<(TextRun | ImageRun | ExternalHyperlink)[]> => {
+    const runs: (TextRun | ImageRun | ExternalHyperlink)[] = [];
 
     for (const child of children) {
       switch (child.type) {
@@ -116,7 +122,6 @@ export class Converter {
             text: this.getPlainText((child as Strong).children),
             bold: true,
           }));
-
           break;
 
         case "emphasis":
@@ -124,8 +129,24 @@ export class Converter {
             text: this.getPlainText((child as Emphasis).children),
             italics: true,
           }));
+          break;
+
+        case "link": {
+          const linkNode = child as Link;
+          const displayText = this.getPlainText(linkNode.children) || linkNode.url;
+
+          runs.push(new ExternalHyperlink({
+            link: linkNode.url,
+            children: [
+              new TextRun({
+                text: this.typograf.execute(displayText),
+                style: "Hyperlink",
+              }),
+            ],
+          }));
 
           break;
+        }
 
         default:
           if ("children" in child)
