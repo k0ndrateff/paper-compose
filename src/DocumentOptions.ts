@@ -116,18 +116,33 @@ export class DocumentOptions {
             },
           },
           {
-            id: "CodePrefix",
-            name: "CodePrefix",
+            id: "Prefix",
+            name: "Prefix",
             basedOn: "Normal",
             next: "Normal",
             quickFormat: true,
             run: {
               italics: true,
-              size: pt(14),
+              size: pt(12),
             },
             paragraph: {
               spacing: { line: 240, before: 240, after: 0 },
               indent: { firstLine: 0 },
+            },
+          },
+          {
+            id: "TableCell",
+            name: "TableCell",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              size: pt(12),
+            },
+            paragraph: {
+              spacing: { line: 240, before: 0, after: 0 },
+              indent: { firstLine: 0 },
+              alignment: AlignmentType.JUSTIFIED,
             },
           },
         ],

@@ -1,4 +1,4 @@
-import { Packer, Document, Paragraph } from "docx";
+import {Packer, Document, Paragraph, Table} from "docx";
 import * as fs from "node:fs";
 import chalk from "chalk";
 import { DocumentOptions } from "./DocumentOptions";
@@ -13,7 +13,7 @@ export class PaperDoc {
     this.doc = new Document(DocumentOptions.default);
   }
 
-  addNodes = (nodes: Paragraph[]): void => {
+  addNodes = (nodes: (Paragraph | Table)[]): void => {
     for (const node of nodes) {
       this.doc.Document.View.add(node);
     }

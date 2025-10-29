@@ -1,11 +1,12 @@
-import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage, Link, Code} from "mdast";
+import {Content, Emphasis, Heading, List, Paragraph as MdParagraph, Root, RootContent, Strong, Text, Image as MdImage, Link, Code, Table as MdTable} from "mdast";
 import chalk from "chalk";
-import {Paragraph, TextRun, ImageRun, AlignmentType, PageBreak, ExternalHyperlink} from "docx";
+import {Paragraph, TextRun, ImageRun, AlignmentType, PageBreak, ExternalHyperlink, TableRow, TableCell, Table, WidthType} from "docx";
 import Typograf from "typograf";
 import { ImageConverter } from "./ImageConverter";
 
 export class Converter {
   private codeListingCount = 0;
+  private tableCount = 0;
 
   private readonly typograf: Typograf;
 
@@ -25,10 +26,10 @@ export class Converter {
     this.imageConverter = new ImageConverter();
   }
 
-  convert = async (source: Root): Promise<Paragraph[]> => {
+  convert = async (source: Root): Promise<(Paragraph | Table)[]> => {
     console.log(`${chalk.blue('Конвертация...')}`);
 
-    const nodes: Paragraph[] = [];
+    const nodes: (Paragraph | Table)[] = [];
 
     for (let child of source.children) {
       const paragraph = await this.convertNode(child);
@@ -45,7 +46,7 @@ export class Converter {
     return nodes;
   };
 
-  private convertNode = async (node: RootContent): Promise<Paragraph | Paragraph[] | null> => {
+  private convertNode = async (node: RootContent): Promise<Paragraph | Paragraph[] | Table[] | null> => {
     switch (node.type) {
       case "heading": {
         const level = (node as Heading).depth;
@@ -97,7 +98,7 @@ export class Converter {
         return [
           new Paragraph({
             children: [new TextRun(`Листинг ${this.codeListingCount}`)],
-            style: "CodePrefix",
+            style: "Prefix",
           }),
 
           new Paragraph({
@@ -134,6 +135,51 @@ export class Converter {
         return new Paragraph({
           children: [new PageBreak()]
         });
+      }
+
+      case "table": {
+        this.tableCount++;
+
+        const table = node as MdTable;
+        const rows: TableRow[] = [];
+
+        for (const row of table.children) {
+          const cells: TableCell[] = [];
+
+          for (const cell of row.children) {
+            cells.push(
+              new TableCell({
+                children: [
+                  new Paragraph({
+                    children: [new TextRun(this.getPlainText(cell.children))],
+                    style: "TableCell"
+                  }),
+                ],
+                borders: {
+                  top: { color: "000000", size: 4, style: "single" },
+                  bottom: { color: "000000", size: 4, style: "single" },
+                  left: { color: "000000", size: 4, style: "single" },
+                  right: { color: "000000", size: 4, style: "single" },
+                },
+                margins: { top: 24, bottom: 24, left: 24, right: 24 },
+              })
+            );
+          }
+
+          rows.push(new TableRow({ children: cells }));
+        }
+
+        return [
+          new Paragraph({
+            children: [new TextRun(`Таблица ${this.tableCount}`)],
+            style: "Prefix",
+          }),
+
+          new Table({
+            rows,
+            width: { size: 100, type: WidthType.PERCENTAGE },
+          })
+        ];
       }
 
       default:
