@@ -99,6 +99,37 @@ export class DocumentOptions {
               spacing: { before: 0, after: 120 },
             },
           },
+          {
+            id: "Code",
+            name: "Code",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              font: "Courier New",
+              size: pt(10),
+            },
+            paragraph: {
+              alignment: AlignmentType.LEFT,
+              spacing: { line: 240, before: 0, after: 120 },
+              indent: { firstLine: 0 },
+            },
+          },
+          {
+            id: "CodePrefix",
+            name: "CodePrefix",
+            basedOn: "Normal",
+            next: "Normal",
+            quickFormat: true,
+            run: {
+              italics: true,
+              size: pt(14),
+            },
+            paragraph: {
+              spacing: { line: 240, before: 240, after: 0 },
+              indent: { firstLine: 0 },
+            },
+          },
         ],
       },
       numbering: {
