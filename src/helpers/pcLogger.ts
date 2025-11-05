@@ -1,8 +1,12 @@
 import chalk from "chalk";
 
 class Logger {
-  step = (text: string) => {
+  step = (text: string): void => {
     console.log(chalk.green(`◈ ${text}`));
+  };
+
+  error = (text: string): void => {
+    console.log(chalk.red(`✗ ${text}`))
   };
 }
 
