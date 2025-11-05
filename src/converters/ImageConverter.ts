@@ -1,11 +1,31 @@
-import { ImageRun } from "docx";
+import {AlignmentType, ImageRun, Paragraph} from "docx";
 import fs from "fs/promises";
 import path from "path";
 import sizeOf from "image-size";
 import chalk from "chalk";
+import {BaseConverter} from "./BaseConverter";
+import {Image as MdImage, Paragraph as MdParagraph} from "mdast";
 
-export class ImageConverter {
-  async convert(src: string, alt?: string): Promise<ImageRun | null> {
+class ImageConverter extends BaseConverter<MdParagraph, Promise<Paragraph[] | null>> {
+  convert = async (node: MdParagraph): Promise<Paragraph[] | null> => {
+    const {url, alt} = node.children[0] as MdImage;
+    const imgRun = await this.convertImage(url, alt ?? undefined);
+
+    if (!imgRun) return null;
+
+    return [
+      new Paragraph({
+        children: [imgRun],
+        alignment: AlignmentType.CENTER,
+      }),
+      new Paragraph({
+        text: alt ?? url,
+        style: "ImageCaption",
+      })
+    ];
+  };
+
+  convertImage = async (src: string, alt?: string): Promise<ImageRun | null> => {
     let buffer: Buffer;
 
     try {
@@ -62,3 +82,5 @@ export class ImageConverter {
     });
   }
 }
+
+export const imageConverter = new ImageConverter();

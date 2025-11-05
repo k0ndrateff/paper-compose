@@ -2,6 +2,7 @@ import {Packer, Document, Paragraph, Table} from "docx";
 import * as fs from "node:fs";
 import chalk from "chalk";
 import { DocumentOptions } from "./DocumentOptions";
+import {pcLogger} from "./helpers/pcLogger";
 
 export class PaperDoc {
   private readonly name: string;
@@ -20,7 +21,7 @@ export class PaperDoc {
   }
 
   save = async (): Promise<void> => {
-    console.log(`${chalk.blue('Сохранение...')}`);
+    pcLogger.step(`${chalk.blue('Сохранение...')}`);
 
     const buffer = await Packer.toBuffer(this.doc);
 
