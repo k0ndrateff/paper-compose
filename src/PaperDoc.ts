@@ -1,17 +1,18 @@
 import {Packer, Document, Paragraph, Table} from "docx";
 import * as fs from "node:fs";
 import chalk from "chalk";
-import { DocumentOptions } from "./DocumentOptions";
+import { DocumentOptions } from "./configuration/DocumentOptions";
 import {pcLogger} from "./helpers/pcLogger";
+import {FrontmatterConfig} from "./configuration/FrontmatterConfig";
 
 export class PaperDoc {
   private readonly name: string;
   private readonly doc: Document;
 
-  constructor(name: string) {
+  constructor(name: string, config: FrontmatterConfig) {
     this.name = name;
 
-    this.doc = new Document(DocumentOptions.default);
+    this.doc = new Document(DocumentOptions.withFrontmatterConfig(config));
   }
 
   addNodes = (nodes: (Paragraph | Table)[]): void => {

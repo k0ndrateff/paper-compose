@@ -5,6 +5,12 @@
 Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 проект использует [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.7.0] - 2025-11-07
+
+### Добавлено
+
+- Поддержка конфигураций Frontmatter.
+
 ## [0.6.1] - 2025-11-06
 
 ### Изменено

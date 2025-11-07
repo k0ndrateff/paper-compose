@@ -1,5 +1,6 @@
 import { AlignmentType, Footer, IPropertiesOptions, PageNumber, Paragraph, TableOfContents, TextRun } from "docx";
-import { cm, pt } from "./helpers/measures";
+import { cm, pt } from "../helpers/measures";
+import {FrontmatterConfig} from "./FrontmatterConfig";
 
 export class DocumentOptions {
   static get default(): IPropertiesOptions {
@@ -227,5 +228,15 @@ export class DocumentOptions {
         },
       ],
     };
+  }
+
+  static withFrontmatterConfig(config: FrontmatterConfig): IPropertiesOptions {
+    const configOptions: Partial<IPropertiesOptions> = {
+      title: config.title,
+      description: config.description,
+      creator: config.author
+    };
+
+    return  { ...DocumentOptions.default, ...configOptions };
   }
 }

@@ -6,11 +6,12 @@ import { MdParser } from "./MdParser";
 import { PaperDoc } from "./PaperDoc";
 import { Converter } from "./converters/Converter";
 import {pcLogger} from "./helpers/pcLogger";
+import {FrontmatterParser} from "./configuration/FrontmatterParser";
 
 program
   .name('paper-compose')
   .description('Markdown → DOCX/PDF с авто-форматированием')
-  .version('0.6.1')
+  .version('0.7.0')
   .argument('<file>', 'Markdown файл для обработки')
   .action(async file => {
     console.log(`${chalk.green('Начато преобразование для')} ${chalk.yellow(file)}${chalk.green('...')}`);
@@ -24,7 +25,9 @@ program
     const md = fs.readFileSync(file, 'utf-8');
 
     const result = new MdParser(md).parse();
-    const doc = new PaperDoc(file.split('.md')[0]);
+
+    const frontmatterConfig = new FrontmatterParser().parse(result);
+    const doc = new PaperDoc(file.split('.md')[0], frontmatterConfig);
 
     const converter = new Converter();
 

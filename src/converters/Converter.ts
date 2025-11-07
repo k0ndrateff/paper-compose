@@ -11,6 +11,15 @@ import {tableConverter} from "./TableConverter";
 import {pcLogger} from "../helpers/pcLogger";
 
 export class Converter {
+  private static converterMap: Partial<Record<keyof RootContentMap, BaseConverter<unknown, unknown>>> = {
+    paragraph: paragraphConverter,
+    heading: headingConverter,
+    code: codeConverter,
+    list: listConverter,
+    thematicBreak: thematicBreakConverter,
+    table: tableConverter,
+  };
+
   convert = async (source: Root): Promise<(Paragraph | Table)[]> => {
     pcLogger.step(`${chalk.blue('Конвертация...')}`);
 
@@ -32,17 +41,8 @@ export class Converter {
   };
 
   private convertNode = async (node: RootContent): Promise<Paragraph | Paragraph[] | Table[] | null> => {
-    const converterMap: Partial<Record<keyof RootContentMap, BaseConverter<unknown, unknown>>> = {
-      paragraph: paragraphConverter,
-      heading: headingConverter,
-      code: codeConverter,
-      list: listConverter,
-      thematicBreak: thematicBreakConverter,
-      table: tableConverter,
-    };
-
-    if (node.type in converterMap) {
-      return await converterMap[node.type]!.convert(node) as Paragraph | Paragraph[] | Table[] | null;
+    if (node.type in Converter.converterMap) {
+      return await Converter.converterMap[node.type]!.convert(node) as Paragraph | Paragraph[] | Table[] | null;
     }
     else {
       return null;

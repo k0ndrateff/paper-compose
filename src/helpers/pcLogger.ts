@@ -8,6 +8,10 @@ class Logger {
   error = (text: string): void => {
     console.log(chalk.red(`✗ ${text}`))
   };
+
+  warning = (text: string): void => {
+    console.log(chalk.yellow(`!? ${text}`))
+  };
 }
 
 export const pcLogger = new Logger();
