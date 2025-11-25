@@ -1,6 +1,6 @@
 {
   "name": "paper-compose",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Compose DOCX from Markdown files.",
   "license": "MIT",
   "type": "module",

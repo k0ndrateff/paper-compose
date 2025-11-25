@@ -231,12 +231,20 @@ export class DocumentOptions {
   }
 
   static withFrontmatterConfig(config: FrontmatterConfig): IPropertiesOptions {
+    const defaultOptions = DocumentOptions.default;
+
     const configOptions: Partial<IPropertiesOptions> = {
       title: config.title,
       description: config.description,
-      creator: config.author
+      creator: config.author,
+      sections: [
+        {
+          ...defaultOptions.sections[0],
+          children: config.toc === false ? [] : defaultOptions.sections[0].children,
+        }
+      ]
     };
 
-    return  { ...DocumentOptions.default, ...configOptions };
+    return  { ...defaultOptions, ...configOptions };
   }
 }
