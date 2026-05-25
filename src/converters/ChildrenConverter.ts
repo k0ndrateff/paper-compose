@@ -2,9 +2,11 @@ import {BaseConverter} from "./BaseConverter";
 import {Content, Emphasis, Link, Strong, Text} from "mdast";
 import {ExternalHyperlink, ImageRun, TextRun} from "docx";
 import Typograf from "typograf";
+import {VM} from "vm2";
 
 class ChildrenConverter extends BaseConverter<Content[], (TextRun | ImageRun | ExternalHyperlink)[]> {
   private readonly typograf: Typograf;
+  private readonly vm: VM;
 
   constructor() {
     super();
@@ -15,9 +17,11 @@ class ChildrenConverter extends BaseConverter<Content[], (TextRun | ImageRun | E
         'common/space/delTrailingBlanks',
         'common/space/delLeadingBlanks',
         'common/space/trimLeft',
-        'common/space/trimRight'
+        'common/space/trimRight',
+        'common/nbsp/*'
       ]
     });
+    this.vm = new VM();
   }
 
   convert = (children: Content[]): (TextRun | ImageRun | ExternalHyperlink)[] => {
@@ -57,6 +61,11 @@ class ChildrenConverter extends BaseConverter<Content[], (TextRun | ImageRun | E
             ],
           }));
 
+          break;
+        }
+
+        case "mdxTextExpression": {
+          runs.push(new TextRun(String(this.vm.run(child.value))));
           break;
         }
 

@@ -4,6 +4,7 @@ import chalk from "chalk";
 import remarkGfm from "remark-gfm";
 import {pcLogger} from "./helpers/pcLogger";
 import remarkFrontmatter from "remark-frontmatter";
+import remarkMdx from "remark-mdx";
 
 export class MdParser {
   private readonly source: string;
@@ -15,6 +16,6 @@ export class MdParser {
   parse = (): Root => {
     pcLogger.step(`${chalk.blue('Парсинг...')}`);
 
-    return remark().use(remarkGfm).use(remarkFrontmatter).parse(this.source);
+    return remark().use(remarkGfm).use(remarkFrontmatter).use(remarkMdx).parse(this.source);
   };
 }

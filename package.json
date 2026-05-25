@@ -1,9 +1,16 @@
 {
   "name": "paper-compose",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Compose DOCX from Markdown files.",
   "author": "k0ndrateff",
-  "keywords": ["markdown", "docx", "compose", "gost", "text", "paper"],
+  "keywords": [
+    "markdown",
+    "docx",
+    "compose",
+    "gost",
+    "text",
+    "paper"
+  ],
   "license": "MIT",
   "type": "module",
   "bin": {
@@ -11,8 +18,8 @@
   },
   "scripts": {
     "build": "tsup",
-    "dev": "tsx src/index.ts ./test.md",
-    "start": "node dist/index.js test.md",
+    "dev": "tsx src/index.ts test.mdx",
+    "start": "node dist/index.js test.mdx",
     "prepublishOnly": "npm run build"
   },
   "files": [
@@ -22,21 +29,23 @@
     "node": ">=18"
   },
   "devDependencies": {
-    "@types/node": "^24.9.2",
+    "@types/node": "^25.6.0",
     "mdast": "^3.0.0",
-    "tsup": "^8.5.0",
-    "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
   },
   "dependencies": {
     "chalk": "^5.6.2",
-    "commander": "^14.0.2",
-    "docx": "^9.5.1",
+    "commander": "^14.0.3",
+    "docx": "^9.6.1",
     "image-size": "^2.0.2",
     "remark": "^15.0.1",
     "remark-frontmatter": "^5.0.0",
     "remark-gfm": "^4.0.1",
+    "remark-mdx": "^3.1.1",
     "typograf": "^7.6.0",
-    "yaml": "^2.8.1"
+    "vm2": "3.10.5",
+    "yaml": "2.8.3"
   }
 }

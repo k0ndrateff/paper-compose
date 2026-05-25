@@ -143,7 +143,7 @@ export class DocumentOptions {
             paragraph: {
               spacing: { line: 240, before: 0, after: 0 },
               indent: { firstLine: 0 },
-              alignment: AlignmentType.JUSTIFIED,
+              alignment: AlignmentType.LEFT,
             },
           },
         ],
